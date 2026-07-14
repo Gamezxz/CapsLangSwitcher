@@ -29,6 +29,7 @@ subsystem involved, so there's no delay to work around.
   have enabled, not hardcoded to Thai/English
 - **Lives in the menu bar** — shows the current input source, no Dock icon
 - **Featherweight** — pure Swift, no Electron, tiny binary
+- **Auto-updates** — checks GitHub for new releases via Sparkle, in-app
 
 ## Install
 
@@ -72,6 +73,9 @@ Requires Xcode Command Line Tools (Swift 5.9+).
   source" shortcut does.
 - `main.swift` — a menu-bar-only (`LSUIElement`) app that wires the two
   together and shows the current input source's abbreviation in the status bar.
+- Auto-update via [Sparkle](https://sparkle-project.org/) — checks
+  `docs/appcast.xml` on launch and daily. `make_release.sh` builds, signs,
+  notarizes, EdDSA-signs the update, and publishes a GitHub release in one go.
 
 ## License
 

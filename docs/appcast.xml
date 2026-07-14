@@ -1,0 +1,36 @@
+<?xml version="1.0" standalone="yes"?>
+<rss version="2.0" xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle" xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <channel>
+    <title>CapsLangSwitcher</title>
+    <link>https://gamezxz.github.io/CapsLangSwitcher/appcast.xml</link>
+    <description>Most recent changes to CapsLangSwitcher</description>
+    <language>en</language>
+    <item>
+        <title>Version 1.1.0</title>
+        <pubDate>Wed, 15 Jul 2026 00:03:47 +0700</pubDate>
+        <sparkle:version>1.1.0</sparkle:version>
+        <sparkle:shortVersionString>1.1.0</sparkle:shortVersionString>
+        <description><![CDATA[Added Sparkle auto-update: checks for new releases on launch and daily, with a Check for Updates menu item.]]></description>
+        <enclosure url="https://github.com/Gamezxz/CapsLangSwitcher/releases/download/v1.1.0/CapsLangSwitcher-1.1.0.zip" type="application/octet-stream" sparkle:edSignature="hZbgXLggLetNK3KpuM17ImAVS1wlYOJD6Cl1WgvmS/6pEL12Jq9s8UnYZZBtQaANJRUrVwaoXpS/rnnostLXBw==" sparkle:length="2595527" />
+    </item>
+    <!--
+      Add a new <item> at the TOP whenever a version ships. make_release.sh does this
+      automatically, but here's the shape for reference:
+
+      <item>
+        <title>Version 1.2</title>
+        <pubDate>Mon, 07 Jul 2026 12:00:00 +0000</pubDate>
+        <sparkle:version>1.2</sparkle:version>
+        <sparkle:shortVersionString>1.2</sparkle:shortVersionString>
+        <description><![CDATA[
+          <h3>What's new</h3>
+          <ul><li>...</li></ul>
+        ]]></description>
+        <enclosure url="https://github.com/Gamezxz/CapsLangSwitcher/releases/download/v1.2/CapsLangSwitcher-1.2.zip"
+                   type="application/octet-stream"
+                   sparkle:edSignature="BASE64_SIGNATURE"
+                   sparkle:length="ZIP_BYTE_LENGTH" />
+      </item>
+    -->
+  </channel>
+</rss>

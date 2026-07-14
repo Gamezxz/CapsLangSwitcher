@@ -1,14 +1,20 @@
 import Cocoa
 import Carbon
+import Sparkle
 
 final class AppDelegate: NSObject, NSApplicationDelegate {
     private let statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
     private let tap = CapsLockTap()
+    private var updaterController: SPUStandardUpdaterController!
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         statusItem.button?.title = "…"
         buildMenu()
         updateStatusTitle()
+
+        // Sparkle auto-updater (checks SUFeedURL on launch + daily)
+        updaterController = SPUStandardUpdaterController(
+            startingUpdater: true, updaterDelegate: nil, userDriverDelegate: nil)
 
         DistributedNotificationCenter.default().addObserver(
             self,
@@ -66,6 +72,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         menu.addItem(withTitle: "CapsLangSwitcher", action: nil, keyEquivalent: "").isEnabled = false
         menu.addItem(.separator())
         menu.addItem(withTitle: "Open Accessibility Settings…", action: #selector(openAccessibilitySettings), keyEquivalent: "")
+        menu.addItem(withTitle: "Check for Updates…", action: #selector(checkForUpdates), keyEquivalent: "")
         menu.addItem(.separator())
         menu.addItem(withTitle: "Quit", action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q")
         for item in menu.items { item.target = self }
@@ -75,6 +82,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     @objc private func openAccessibilitySettings() {
         let url = URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility")!
         NSWorkspace.shared.open(url)
+    }
+
+    @objc private func checkForUpdates() {
+        updaterController?.updater.checkForUpdates()
     }
 }
 
