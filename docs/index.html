@@ -316,8 +316,8 @@
   <section class="reveal d4">
     <h2>How it works</h2>
     <div class="steps">
-      <div class="step"><span class="num">1</span><p>Tap the <span class="kbd">Caps Lock</span> key — no need to hold it</p></div>
-      <div class="step"><span class="num">2</span><p>A <code>CGEventTap</code> grabs it at the HID level and swallows the real caps-lock toggle entirely</p></div>
+      <div class="step"><span class="num">1</span><p>Caps Lock is remapped to <span class="kbd">F18</span> via <code>hidutil</code> — below the firmware caps-lock delay, so it fires the instant you press it</p></div>
+      <div class="step"><span class="num">2</span><p>A <code>CGEventTap</code> catches the F18 key-down at the HID level and swallows it</p></div>
       <div class="step"><span class="num">3</span><p>The app calls macOS's Text Input Source API directly, in-process — your input source switches on the spot</p></div>
     </div>
   </section>
@@ -328,7 +328,7 @@
       <div class="card">
         <div class="icon">⌨️</div>
         <h3>Zero-Delay Switching</h3>
-        <p>Bypasses the OS hotkey-disambiguation delay entirely by never going through the system's shortcut subsystem.</p>
+        <p>Remaps Caps Lock to F18 at the HID level, beating both the OS hotkey delay and the firmware caps-lock activation delay.</p>
       </div>
       <div class="card">
         <div class="icon">🔒</div>

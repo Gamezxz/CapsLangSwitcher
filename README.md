@@ -12,13 +12,17 @@
 
 On macOS, binding Caps Lock to "switch input source" goes through the system's
 hotkey-disambiguation logic, which adds a noticeable delay before the switch
-actually happens — especially annoying for Thai/English (ก/A) switching.
+actually happens — especially annoying for Thai/English (ก/A) switching. On top
+of that, Apple's built-in keyboards apply a firmware "hold briefly to engage"
+delay to Caps Lock itself, so even a custom app that watches the caps-lock state
+change (`flagsChanged`) still has to wait that delay out.
 
-CapsLangSwitcher fixes this by grabbing the physical Caps Lock key at the HID
-level with a `CGEventTap`, swallowing the key's native "toggle caps" behavior
-entirely, and calling the Text Input Source Services API (`TISSelectInputSource`)
-directly, in-process, the instant the key goes down. There's no OS hotkey
-subsystem involved, so there's no delay to work around.
+CapsLangSwitcher sidesteps both. It remaps Caps Lock → **F18** at the HID level
+using `hidutil` — a remap that happens *below* the caps-lock activation delay, so
+the key fires as an ordinary key-down the instant it's pressed. The app then
+watches for F18 via a `CGEventTap`, swallows it, and calls the Text Input Source
+Services API (`TISSelectInputSource`) directly, in-process. No OS hotkey
+subsystem, no caps-lock firmware delay, nothing to wait on.
 
 ## Features
 
@@ -53,26 +57,32 @@ Requires Xcode Command Line Tools (Swift 5.9+).
 ## Setup
 
 1. Launch the app once — it will prompt for **Accessibility** access
-   (System Settings → Privacy & Security → Accessibility). Allow it.
+   (System Settings → Privacy & Security → Accessibility). Allow it. Once
+   granted, the app applies the Caps Lock → F18 remap automatically.
 2. Go to System Settings → Keyboard → Keyboard Shortcuts → Input Sources, and
    turn off any existing shortcut bound to Caps Lock (e.g. "Select previous
    input source") so it doesn't fight with the app.
 3. Tap Caps Lock. Your input source switches immediately.
 
+While the app runs, Caps Lock is fully repurposed (no actual caps-lock toggle).
+The remap is restored to normal on quit. If the app is force-killed, Caps Lock
+stays remapped until you relaunch it or log out; run
+`hidutil property --set '{"UserKeyMapping":[]}'` to reset it by hand.
+
 ## How it works
 
-- `CapsLockTap.swift` — a `CGEventTap` at `.cghidEventTap` listening for
-  `flagsChanged` events on keycode 57 (Caps Lock). Every event for that key is
-  swallowed (`return nil`), so the real caps-lock state never changes. A tap
-  fires `onTap` once per physical press (deduped by tracking the AlphaShift
-  bit transition, since the press and release events for this key report the
-  same bit value).
+- `CapsLockTap.swift` — on start, remaps Caps Lock (HID usage `0x700000039`) →
+  F18 (`0x70000006D`) via `hidutil property --set`. Then a `CGEventTap` at
+  `.cghidEventTap` watches for F18 key-downs (keycode 79), swallows them
+  (`return nil`), and fires `onTap` once per press (ignoring OS autorepeat).
+  The remap is cleared on quit.
 - `InputSourceSwitcher.swift` — enumerates the enabled, selectable keyboard
   input sources via `TISCreateInputSourceList` and calls `TISSelectInputSource`
   on the next one in the list, mirroring what the system's own "next input
   source" shortcut does.
 - `main.swift` — a menu-bar-only (`LSUIElement`) app that wires the two
-  together and shows the current input source's abbreviation in the status bar.
+  together, shows a menu bar icon, and clears the remap in
+  `applicationWillTerminate`.
 - Auto-update via [Sparkle](https://sparkle-project.org/) — checks
   `docs/appcast.xml` on launch and daily. `make_release.sh` builds, signs,
   notarizes, EdDSA-signs the update, and publishes a GitHub release in one go.

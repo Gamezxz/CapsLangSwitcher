@@ -121,6 +121,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
             NSApp.setActivationPolicy(.accessory)
         }
     }
+
+    // Restore Caps Lock to normal on quit — otherwise it stays remapped to F18 (a dead key)
+    // while the app isn't running to handle it.
+    func applicationWillTerminate(_ notification: Notification) {
+        tap.clearRemap()
+    }
 }
 
 let app = NSApplication.shared
