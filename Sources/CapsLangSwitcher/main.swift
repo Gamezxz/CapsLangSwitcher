@@ -61,10 +61,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     }
 
     @objc private func updateStatusTitle() {
-        guard let source = InputSourceSwitcher.currentSource() else {
-            statusItem.button?.title = "⌨️"
-            return
-        }
+        // If the current source is momentarily unavailable (e.g. mid-switch), keep
+        // showing the last known title instead of flashing a fallback icon.
+        guard let source = InputSourceSwitcher.currentSource() else { return }
         let name = InputSourceSwitcher.localizedName(source)
         statusItem.button?.title = String(name.prefix(2)).uppercased()
     }
@@ -78,8 +77,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         menu.addItem(.separator())
         menu.addItem(withTitle: "About CapsLangSwitcher", action: #selector(openAbout), keyEquivalent: "")
         menu.addItem(.separator())
-        menu.addItem(withTitle: "Quit", action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q")
-        for item in menu.items { item.target = self }
+        let quit = NSMenuItem(title: "Quit", action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q")
+        quit.target = NSApp // NSApplication.terminate(_:) lives on NSApp, not on this delegate
+        menu.addItem(quit)
+
+        for item in menu.items where item.action != #selector(NSApplication.terminate(_:)) {
+            item.target = self
+        }
         statusItem.menu = menu
     }
 
