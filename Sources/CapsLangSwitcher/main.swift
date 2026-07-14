@@ -10,7 +10,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     private var aboutWindow: NSWindow?
 
     func applicationDidFinishLaunching(_ notification: Notification) {
-        statusItem.button?.title = "…"
+        let icon = NSImage(systemSymbolName: "capslock.fill", accessibilityDescription: "CapsLangSwitcher")
+        icon?.isTemplate = true // adapts to light/dark menu bar automatically, like other status items
+        statusItem.button?.image = icon
         buildMenu()
         updateStatusTitle()
 
@@ -61,11 +63,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     }
 
     @objc private func updateStatusTitle() {
-        // If the current source is momentarily unavailable (e.g. mid-switch), keep
-        // showing the last known title instead of flashing a fallback icon.
+        // Icon stays fixed; the tooltip shows which input source is active on hover.
         guard let source = InputSourceSwitcher.currentSource() else { return }
-        let name = InputSourceSwitcher.localizedName(source)
-        statusItem.button?.title = String(name.prefix(2)).uppercased()
+        statusItem.button?.toolTip = InputSourceSwitcher.localizedName(source)
     }
 
     private func buildMenu() {
