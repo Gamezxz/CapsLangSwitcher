@@ -6,6 +6,14 @@
     <description>Most recent changes to CapsLangSwitcher</description>
     <language>en</language>
     <item>
+        <title>Version 1.1.2</title>
+        <pubDate>Wed, 15 Jul 2026 00:31:39 +0700</pubDate>
+        <sparkle:version>1.1.2</sparkle:version>
+        <sparkle:shortVersionString>1.1.2</sparkle:shortVersionString>
+        <description><![CDATA[Fix: update installer error — was incorrectly using Sparkle's sandboxed-app installer XPC service on a non-sandboxed app.]]></description>
+        <enclosure url="https://github.com/Gamezxz/CapsLangSwitcher/releases/download/v1.1.2/CapsLangSwitcher-1.1.2.zip" type="application/octet-stream" sparkle:edSignature="DBC7GzSkJW6zRzMVQGL6P4kDia5zmnNKJxEQOu/Escj7qDe0/e857A0JBBiPGHZcD6uZXAIbvN6BQQLfnfo0DA==" sparkle:length="2835754" />
+    </item>
+    <item>
         <title>Version 1.1.1</title>
         <pubDate>Wed, 15 Jul 2026 00:17:54 +0700</pubDate>
         <sparkle:version>1.1.1</sparkle:version>
