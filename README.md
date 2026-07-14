@@ -35,8 +35,8 @@ subsystem involved, so there's no delay to work around.
 Download the latest build from [Releases](https://github.com/Gamezxz/CapsLangSwitcher/releases),
 unzip, and move `CapsLangSwitcher.app` to `/Applications`.
 
-It's an unsigned developer build (not notarized), so the first time you open
-it, right-click → **Open** to get past Gatekeeper.
+Signed with a Developer ID and notarized by Apple — just double-click to open,
+no Gatekeeper warnings.
 
 ### Build from source
 

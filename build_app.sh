@@ -38,9 +38,18 @@ cat > "$APP_DIR/Contents/Info.plist" <<PLIST
 </plist>
 PLIST
 
-# Ad-hoc sign with a stable identifier so re-signing the same bundle id keeps a consistent
-# TCC identity as much as ad-hoc signing allows (still may require re-approving Accessibility
-# after rebuilds — see README notes).
-codesign --force --deep --sign - --identifier "$BUNDLE_ID" "$APP_DIR"
+DEVELOPER_ID="Developer ID Application: Viriya Langkaviket (DYJAX3728R)"
+
+if security find-identity -v -p codesigning | grep -q "$DEVELOPER_ID"; then
+  echo "Signing with $DEVELOPER_ID (hardened runtime, for notarization)"
+  codesign --force --deep --options runtime --timestamp \
+    --sign "$DEVELOPER_ID" --identifier "$BUNDLE_ID" "$APP_DIR"
+else
+  echo "No Developer ID identity found — falling back to ad-hoc signing"
+  # Ad-hoc sign with a stable identifier so re-signing the same bundle id keeps a consistent
+  # TCC identity as much as ad-hoc signing allows (still may require re-approving Accessibility
+  # after rebuilds — see README notes).
+  codesign --force --deep --sign - --identifier "$BUNDLE_ID" "$APP_DIR"
+fi
 
 echo "Built $APP_DIR"
