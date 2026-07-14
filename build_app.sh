@@ -23,6 +23,12 @@ if [ -n "$SPARKLE_FW" ]; then
   mkdir -p "$APP_DIR/Contents/Frameworks"
   rm -rf "$APP_DIR/Contents/Frameworks/Sparkle.framework"
   cp -R "$SPARKLE_FW" "$APP_DIR/Contents/Frameworks/Sparkle.framework"
+  # Strip AppleDouble sidecar files (._*) left over from how the artifact was unpacked —
+  # Gatekeeper rejects any embedded framework with unsealed loose files in its root
+  # ("unsealed contents present in the root directory of an embedded framework"),
+  # even though local/unquarantined runs never trigger that check.
+  find "$APP_DIR/Contents/Frameworks/Sparkle.framework" -name "._*" -delete
+  xattr -cr "$APP_DIR/Contents/Frameworks/Sparkle.framework"
   install_name_tool -add_rpath @loader_path/../Frameworks "$APP_DIR/Contents/MacOS/$APP_NAME" 2>/dev/null || true
   echo "Embedded Sparkle.framework"
 else
