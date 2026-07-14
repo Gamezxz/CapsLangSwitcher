@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CapsLangSwitcher — Tap Caps Lock, switch languages instantly</title>
+<meta name="description" content="CapsLangSwitcher — a menu-bar app for macOS that switches your input language the instant you tap Caps Lock, with zero OS hotkey delay.">
+<meta name="theme-color" content="#cd6f4d">
+<meta name="color-scheme" content="light dark">
+<meta name="author" content="Gamezxz">
+<meta name="keywords" content="CapsLangSwitcher, macOS input source switch, Caps Lock language switch, Thai English switch, ก A switch, menu bar app, CGEventTap, no delay input switch, free open source">
+<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1">
+<link rel="canonical" href="https://gamezxz.github.io/CapsLangSwitcher/">
+
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://gamezxz.github.io/CapsLangSwitcher/">
+<meta property="og:site_name" content="CapsLangSwitcher">
+<meta property="og:title" content="CapsLangSwitcher — Tap Caps Lock, switch languages instantly">
+<meta property="og:description" content="A menu-bar app for macOS that switches your input language the instant you tap Caps Lock. Zero OS hotkey delay. Free & open source.">
+<meta property="og:image" content="https://gamezxz.github.io/CapsLangSwitcher/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="CapsLangSwitcher — macOS menu-bar input switcher">
+<meta property="og:locale" content="en_US">
+
+<!-- Twitter -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="CapsLangSwitcher — Tap Caps Lock, switch languages instantly">
+<meta name="twitter:description" content="Zero-delay Caps Lock input-source switching for macOS. Free & open source.">
+<meta name="twitter:image" content="https://gamezxz.github.io/CapsLangSwitcher/og.png">
+<meta name="twitter:creator" content="@iGammy">
+
+<link rel="icon" href="logo.png">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "CapsLangSwitcher",
+  "operatingSystem": "macOS 12.0 or later",
+  "applicationCategory": "UtilitiesApplication",
+  "description": "A menu-bar app for macOS that switches your input language the instant you tap Caps Lock, with zero OS hotkey delay.",
+  "url": "https://gamezxz.github.io/CapsLangSwitcher/",
+  "downloadUrl": "https://github.com/Gamezxz/CapsLangSwitcher/releases",
+  "image": "https://gamezxz.github.io/CapsLangSwitcher/og.png",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+  "author": {
+    "@type": "Person",
+    "name": "Gamezxz",
+    "sameAs": [
+      "https://github.com/Gamezxz",
+      "https://twitter.com/iGammy"
+    ]
+  }
+}
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Hanken+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    /* Claude-inspired warm palette — cream/clay, shared with the author's other apps */
+    --bg: #f4f2ea;
+    --bg-2: #efece1;
+    --fg: #1c1b17;
+    --muted: #6f6b60;
+    --line: #e0dccf;
+    --accent: #cd6f4d;
+    --accent-ink: #b85c3b;
+    --accent-soft: rgba(205, 111, 77, 0.12);
+    --hover-bg: #ebe7da;
+    --grain-opacity: 0.04;
+    --max: 960px;
+    --serif: "Fraunces", Georgia, "Times New Roman", serif;
+    --sans: "Hanken Grotesk", -apple-system, BlinkMacSystemFont, sans-serif;
+    --mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #1e1c18;
+      --bg-2: #24221d;
+      --fg: #ece7da;
+      --muted: #9c9587;
+      --line: #36332b;
+      --accent: #e1875f;
+      --accent-ink: #ec9978;
+      --accent-soft: rgba(225, 135, 95, 0.14);
+      --hover-bg: #28251f;
+      --grain-opacity: 0.06;
+    }
+  }
+  *, *::before, *::after { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--fg);
+    font-family: var(--sans);
+    font-size: 16px;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+    position: relative;
+    overflow-x: hidden;
+  }
+  body::before {
+    content: "";
+    position: fixed;
+    top: -10%; left: 50%;
+    width: 120vw; height: 60vh;
+    transform: translateX(-50%);
+    background: radial-gradient(ellipse at center, var(--accent-soft) 0%, transparent 60%);
+    pointer-events: none; z-index: 0;
+  }
+  body::after {
+    content: "";
+    position: fixed; inset: 0;
+    pointer-events: none; z-index: 1;
+    opacity: var(--grain-opacity);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  a { color: inherit; text-decoration: none; }
+  main {
+    position: relative; z-index: 2;
+    max-width: var(--max);
+    margin: 0 auto;
+    padding: 10vh 24px 64px;
+  }
+
+  /* ---- Hero ---- */
+  .hero { display: flex; align-items: center; gap: 28px; flex-wrap: wrap; }
+  .hero .logo {
+    flex-shrink: 0;
+    width: 116px; height: 116px;
+    border-radius: 26px;
+    box-shadow: 0 10px 34px var(--accent-soft), 0 3px 12px rgba(0,0,0,.14);
+    transition: transform .3s ease;
+  }
+  .hero .logo:hover { transform: scale(1.03) rotate(-1.5deg); }
+  .hero h1 {
+    font-family: var(--serif);
+    font-optical-sizing: auto;
+    font-size: clamp(2.4rem, 7.5vw, 3.4rem);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1.02;
+    margin: 0;
+    display: inline-flex; align-items: baseline;
+  }
+  .cursor {
+    display: inline-block;
+    width: .5ch; height: .92em;
+    margin-left: 6px;
+    background: var(--accent);
+    border-radius: 1px;
+    transform: translateY(.04em);
+    animation: blink 1.15s steps(1) infinite;
+  }
+  @keyframes blink { 50% { opacity: 0; } }
+  .roles {
+    font-family: var(--mono);
+    color: var(--muted);
+    margin: 14px 0 0;
+    font-size: .82rem;
+    letter-spacing: .01em;
+  }
+  .tagline {
+    margin: 26px 0 0;
+    font-size: 1.25rem;
+    line-height: 1.6;
+    max-width: 40ch;
+    font-family: var(--serif);
+    font-weight: 400;
+    font-style: italic;
+  }
+  .tagline strong { font-style: normal; font-weight: 600; color: var(--accent-ink); }
+
+  .btns { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 30px; }
+  .btn {
+    display: inline-flex; align-items: center; gap: 9px;
+    padding: 12px 24px;
+    border-radius: 12px;
+    font-weight: 600; font-size: .98rem;
+    border: 1.5px solid transparent;
+    transition: transform .15s ease, box-shadow .15s ease, background .15s ease;
+  }
+  .btn:hover { transform: translateY(-2px); }
+  .btn-primary {
+    background: var(--accent);
+    color: #fff;
+    box-shadow: 0 6px 22px var(--accent-soft);
+  }
+  .btn-primary:hover { background: var(--accent-ink); }
+  .btn-ghost { border-color: var(--line); background: var(--bg-2); }
+  .btn-ghost:hover { background: var(--hover-bg); border-color: var(--accent); }
+  .meta { margin-top: 14px; font-family: var(--mono); font-size: .76rem; color: var(--muted); }
+
+  .reveal { opacity: 0; transform: translateY(14px); animation: rise .7s cubic-bezier(.2,.7,.2,1) forwards; }
+  .d1 { animation-delay: .05s; } .d2 { animation-delay: .13s; }
+  .d3 { animation-delay: .21s; } .d4 { animation-delay: .32s; }
+  .d5 { animation-delay: .43s; } .d6 { animation-delay: .54s; }
+  @keyframes rise { to { opacity: 1; transform: none; } }
+  @media (prefers-reduced-motion: reduce) {
+    .reveal { animation: none; opacity: 1; transform: none; }
+    .cursor { animation: none; }
+  }
+
+  /* ---- Sections ---- */
+  section { margin-top: 64px; }
+  h2 {
+    font-family: var(--mono);
+    font-size: .74rem;
+    font-weight: 600;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: 0 0 20px;
+    display: flex; align-items: center; gap: 12px;
+  }
+  h2::after { content: ""; flex: 1; height: 1px; background: var(--line); }
+
+  .steps { display: grid; gap: 0; border: 1px solid var(--line); border-radius: 16px; background: var(--bg-2); overflow: hidden; }
+  .step {
+    display: flex; gap: 16px; align-items: baseline;
+    padding: 18px 22px;
+  }
+  .step + .step { border-top: 1px solid var(--line); }
+  .step .num {
+    font-family: var(--serif);
+    font-size: 1.5rem; font-weight: 600;
+    color: var(--accent-ink);
+    flex: none; width: 1.4ch;
+  }
+  .step p { margin: 0; }
+  .kbd {
+    display: inline-block;
+    padding: 2px 9px;
+    border-radius: 7px;
+    border: 1px solid var(--line);
+    border-bottom-width: 2.5px;
+    background: var(--bg);
+    font-family: var(--mono);
+    font-size: .85rem;
+  }
+
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; }
+  .card {
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    background: var(--bg-2);
+    padding: 22px 24px;
+    transition: border-color .18s ease, background .18s ease, transform .2s ease;
+  }
+  .card:hover { border-color: var(--accent); background: var(--hover-bg); transform: translateY(-2px); }
+  .card .icon { font-size: 1.5rem; }
+  .card h3 {
+    font-family: var(--serif);
+    font-size: 1.15rem; font-weight: 600;
+    margin: 10px 0 6px;
+  }
+  .card p { margin: 0; color: var(--muted); font-size: .93rem; }
+
+  .install-box {
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    background: var(--bg-2);
+    padding: 26px 30px;
+  }
+  .install-box ol { margin: 0; padding-left: 22px; color: var(--muted); }
+  .install-box li { margin: 9px 0; }
+  .install-box li strong { color: var(--fg); }
+  .install-box a { color: var(--accent-ink); border-bottom: 1px solid var(--accent-soft); }
+  code {
+    font-family: var(--mono);
+    font-size: .85em;
+    background: var(--bg);
+    border: 1px solid var(--line);
+    padding: 2px 7px;
+    border-radius: 6px;
+  }
+
+  footer {
+    position: relative; z-index: 2;
+    max-width: var(--max);
+    margin: 0 auto;
+    padding: 30px 24px 48px;
+    border-top: 1px solid var(--line);
+    font-family: var(--mono);
+    font-size: .78rem;
+    color: var(--muted);
+    display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px;
+  }
+  footer a { color: var(--accent-ink); }
+  footer a:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+<main>
+
+  <header class="hero reveal d1">
+    <img class="logo" src="logo.png" alt="CapsLangSwitcher logo">
+    <div>
+      <h1>CapsLangSwitcher<span class="cursor"></span></h1>
+      <p class="roles">macos · menu-bar · caps lock · zero-delay input switch</p>
+    </div>
+  </header>
+
+  <p class="tagline reveal d2">Tap <span class="kbd">Caps Lock</span>, switch languages — <strong>instantly</strong>. No macOS hotkey-disambiguation delay, ever.</p>
+
+  <div class="btns reveal d3">
+    <a class="btn btn-primary" href="https://github.com/Gamezxz/CapsLangSwitcher/releases/latest">⬇︎&nbsp; Download for macOS</a>
+    <a class="btn btn-ghost" href="https://github.com/Gamezxz/CapsLangSwitcher">View on GitHub</a>
+  </div>
+  <p class="meta reveal d3">macos 12+ · free &amp; open source · pure swift · unsigned developer build</p>
+
+  <section class="reveal d4">
+    <h2>How it works</h2>
+    <div class="steps">
+      <div class="step"><span class="num">1</span><p>Tap the <span class="kbd">Caps Lock</span> key — no need to hold it</p></div>
+      <div class="step"><span class="num">2</span><p>A <code>CGEventTap</code> grabs it at the HID level and swallows the real caps-lock toggle entirely</p></div>
+      <div class="step"><span class="num">3</span><p>The app calls macOS's Text Input Source API directly, in-process — your input source switches on the spot</p></div>
+    </div>
+  </section>
+
+  <section class="reveal d5">
+    <h2>Why CapsLangSwitcher</h2>
+    <div class="grid">
+      <div class="card">
+        <div class="icon">⌨️</div>
+        <h3>Zero-Delay Switching</h3>
+        <p>Bypasses the OS hotkey-disambiguation delay entirely by never going through the system's shortcut subsystem.</p>
+      </div>
+      <div class="card">
+        <div class="icon">🔒</div>
+        <h3>Real Caps Lock Repurposed</h3>
+        <p>The physical key is swallowed at the HID level — it never triggers actual caps lock while the app is running.</p>
+      </div>
+      <div class="card">
+        <div class="icon">🔁</div>
+        <h3>Cycles Any Input Sources</h3>
+        <p>Works with however many keyboard layouts you have enabled — not hardcoded to Thai/English.</p>
+      </div>
+      <div class="card">
+        <div class="icon">📍</div>
+        <h3>Lives in the Menu Bar</h3>
+        <p>Shows your current input source at a glance. No Dock icon, no clutter.</p>
+      </div>
+      <div class="card">
+        <div class="icon">🪶</div>
+        <h3>Featherweight</h3>
+        <p>Pure Swift. No Electron, no background daemons weighing your Mac down.</p>
+      </div>
+      <div class="card">
+        <div class="icon">🛠️</div>
+        <h3>Open Source</h3>
+        <p>MIT licensed and small enough to read in one sitting — hack it to fit your own workflow.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="reveal d6">
+    <h2>Get started in 2 minutes</h2>
+    <div class="install-box">
+      <ol>
+        <li>Download <strong>CapsLangSwitcher.app.zip</strong> from <a href="https://github.com/Gamezxz/CapsLangSwitcher/releases/latest">Releases</a> and move it to Applications</li>
+        <li>Right-click → <strong>Open</strong> the first time (it's an unsigned build, so Gatekeeper needs the nod)</li>
+        <li>Allow <strong>Accessibility</strong> access when prompted (System Settings → Privacy &amp; Security → Accessibility)</li>
+        <li>Turn off any existing Caps Lock shortcut in System Settings → Keyboard → Keyboard Shortcuts → Input Sources</li>
+        <li>Tap <strong>Caps Lock</strong> and enjoy instant switching</li>
+      </ol>
+    </div>
+  </section>
+
+</main>
+<footer>
+  <span>capslangswitcher — by <a href="https://github.com/Gamezxz">gamezxz</a></span>
+  <span><a href="https://github.com/Gamezxz/CapsLangSwitcher">github</a> · <a href="https://github.com/Gamezxz/CapsLangSwitcher/releases">releases</a></span>
+</footer>
+</body>
+</html>

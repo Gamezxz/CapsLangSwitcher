@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f4f2ea"/>
+      <stop offset="100%" stop-color="#efece1"/>
+    </linearGradient>
+    <linearGradient id="badge" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#e1875f"/>
+      <stop offset="100%" stop-color="#b85c3b"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1200" height="630" fill="url(#bg)"/>
+
+  <g transform="translate(90,155) scale(0.625)">
+    <rect x="0" y="0" width="512" height="512" rx="115" fill="url(#badge)"/>
+    <path d="M 256 108 L 350 190 L 322 190 L 322 236 L 190 236 L 190 190 L 162 190 Z" fill="#f6f1e6"/>
+    <rect x="190" y="252" width="132" height="26" rx="8" fill="#f6f1e6"/>
+    <g font-family="'Hanken Grotesk','PingFang Thai','Thonburi',-apple-system,'Helvetica Neue',Arial,sans-serif" font-weight="700" fill="#f6f1e6">
+      <text x="150" y="400" font-size="128" text-anchor="middle">ก</text>
+      <text x="362" y="400" font-size="128" text-anchor="middle">A</text>
+    </g>
+    <g stroke="#f6f1e6" stroke-width="12" stroke-linecap="round" fill="none" opacity="0.92">
+      <path d="M 226 352 h 60 M 226 352 l 16 -16 M 226 352 l 16 16"/>
+      <path d="M 286 380 h -60 M 286 380 l -16 -16 M 286 380 l -16 16"/>
+    </g>
+  </g>
+
+  <g font-family="'Fraunces','Hanken Grotesk',-apple-system,Georgia,serif" fill="#1c1b17">
+    <text x="470" y="290" font-size="76" font-weight="600">CapsLangSwitcher</text>
+  </g>
+  <g font-family="'Hanken Grotesk',-apple-system,sans-serif" fill="#6f6b60">
+    <text x="472" y="345" font-size="30">Tap Caps Lock, switch languages — instantly.</text>
+    <text x="472" y="385" font-size="30">Zero OS hotkey delay, ever.</text>
+  </g>
+  <g font-family="ui-monospace,'SF Mono',monospace" fill="#9c9587">
+    <text x="472" y="440" font-size="22">macos · menu-bar · open source · free</text>
+  </g>
+</svg>

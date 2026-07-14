@@ -1,0 +1,4 @@
+.build/
+CapsLangSwitcher.app/
+.DS_Store
+*.zip
