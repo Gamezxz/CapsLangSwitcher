@@ -6,6 +6,14 @@
     <description>Most recent changes to CapsLangSwitcher</description>
     <language>en</language>
     <item>
+        <title>Version 1.1.3</title>
+        <pubDate>Wed, 15 Jul 2026 01:33:07 +0700</pubDate>
+        <sparkle:version>1.1.3</sparkle:version>
+        <sparkle:shortVersionString>1.1.3</sparkle:shortVersionString>
+        <description><![CDATA[Fix: Gatekeeper was rejecting the app on fresh downloads ("Apple could not verify is free of malware") due to stray metadata files inside the embedded Sparkle framework.]]></description>
+        <enclosure url="https://github.com/Gamezxz/CapsLangSwitcher/releases/download/v1.1.3/CapsLangSwitcher-1.1.3.zip" type="application/octet-stream" sparkle:edSignature="Qr6eWTpAQYXL+3YLxu8nDD+jH9CD5O64L5ysh01xvcrv+1qV8X5iShZPBNrPQkkXxJ9xDpGmZWHazsf7Qn3NAQ==" sparkle:length="2835540" />
+    </item>
+    <item>
         <title>Version 1.1.2</title>
         <pubDate>Wed, 15 Jul 2026 00:31:39 +0700</pubDate>
         <sparkle:version>1.1.2</sparkle:version>
