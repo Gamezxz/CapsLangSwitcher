@@ -15,6 +15,7 @@ mkdir -p "$APP_DIR/Contents/MacOS" "$APP_DIR/Contents/Resources"
 cp ".build/release/$APP_NAME" "$APP_DIR/Contents/MacOS/$APP_NAME"
 cp "Info.plist" "$APP_DIR/Contents/Info.plist"
 cp "assets/AppIcon.icns" "$APP_DIR/Contents/Resources/AppIcon.icns"
+cp "assets/logo.png" "$APP_DIR/Contents/Resources/logo.png"
 
 # Embed Sparkle.framework (universal) for auto-update
 SPARKLE_FW=$(find .build/artifacts -type d -name "Sparkle.framework" -path "*macos-arm64_x86_64*" 2>/dev/null | head -1)

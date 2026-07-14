@@ -1,11 +1,13 @@
 import Cocoa
+import SwiftUI
 import Carbon
 import Sparkle
 
-final class AppDelegate: NSObject, NSApplicationDelegate {
+final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     private let statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
     private let tap = CapsLockTap()
     private var updaterController: SPUStandardUpdaterController!
+    private var aboutWindow: NSWindow?
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         statusItem.button?.title = "…"
@@ -74,6 +76,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         menu.addItem(withTitle: "Open Accessibility Settings…", action: #selector(openAccessibilitySettings), keyEquivalent: "")
         menu.addItem(withTitle: "Check for Updates…", action: #selector(checkForUpdates), keyEquivalent: "")
         menu.addItem(.separator())
+        menu.addItem(withTitle: "About CapsLangSwitcher", action: #selector(openAbout), keyEquivalent: "")
+        menu.addItem(.separator())
         menu.addItem(withTitle: "Quit", action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q")
         for item in menu.items { item.target = self }
         statusItem.menu = menu
@@ -86,6 +90,32 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     @objc private func checkForUpdates() {
         updaterController?.updater.checkForUpdates()
+    }
+
+    @objc private func openAbout() {
+        if aboutWindow == nil {
+            let w = NSWindow(
+                contentRect: NSRect(x: 0, y: 0, width: 340, height: 420),
+                styleMask: [.titled, .closable], backing: .buffered, defer: false)
+            w.title = "About CapsLangSwitcher"
+            w.contentView = NSHostingView(rootView: AboutView())
+            w.isReleasedWhenClosed = false
+            w.delegate = self
+            w.center()
+            aboutWindow = w
+        }
+        // Menu-bar app (.accessory) can't receive keyboard focus
+        // → switch to .regular temporarily so the window can become key
+        NSApp.setActivationPolicy(.regular)
+        NSApp.activate(ignoringOtherApps: true)
+        aboutWindow?.makeKeyAndOrderFront(nil)
+    }
+
+    // Return to menu-bar mode when the About window closes (hide from Dock)
+    func windowWillClose(_ notification: Notification) {
+        if (notification.object as? NSWindow) === aboutWindow {
+            NSApp.setActivationPolicy(.accessory)
+        }
     }
 }
 
