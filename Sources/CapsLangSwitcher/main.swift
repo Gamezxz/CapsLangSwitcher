@@ -72,19 +72,26 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         let menu = NSMenu()
         menu.addItem(withTitle: "CapsLangSwitcher", action: nil, keyEquivalent: "").isEnabled = false
         menu.addItem(.separator())
-        menu.addItem(withTitle: "Open Accessibility Settings…", action: #selector(openAccessibilitySettings), keyEquivalent: "")
-        menu.addItem(withTitle: "Check for Updates…", action: #selector(checkForUpdates), keyEquivalent: "")
+
+        addItem(to: menu, "Open Accessibility Settings…", #selector(openAccessibilitySettings), symbol: "accessibility")
+        addItem(to: menu, "Check for Updates…", #selector(checkForUpdates), symbol: "arrow.triangle.2.circlepath")
+        addItem(to: menu, "What's New…", #selector(openChangelog), symbol: "sparkles")
+        addItem(to: menu, "About CapsLangSwitcher", #selector(openAbout), symbol: "info.circle")
         menu.addItem(.separator())
-        menu.addItem(withTitle: "About CapsLangSwitcher", action: #selector(openAbout), keyEquivalent: "")
-        menu.addItem(.separator())
+
         let quit = NSMenuItem(title: "Quit", action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q")
         quit.target = NSApp // NSApplication.terminate(_:) lives on NSApp, not on this delegate
+        quit.image = NSImage(systemSymbolName: "power", accessibilityDescription: nil)
         menu.addItem(quit)
 
-        for item in menu.items where item.action != #selector(NSApplication.terminate(_:)) {
-            item.target = self
-        }
         statusItem.menu = menu
+    }
+
+    private func addItem(to menu: NSMenu, _ title: String, _ action: Selector, symbol: String) {
+        let item = NSMenuItem(title: title, action: action, keyEquivalent: "")
+        item.target = self
+        item.image = NSImage(systemSymbolName: symbol, accessibilityDescription: nil)
+        menu.addItem(item)
     }
 
     @objc private func openAccessibilitySettings() {
@@ -94,6 +101,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
 
     @objc private func checkForUpdates() {
         updaterController?.updater.checkForUpdates()
+    }
+
+    @objc private func openChangelog() {
+        if let url = URL(string: "https://gamezxz.github.io/CapsLangSwitcher/changelog") {
+            NSWorkspace.shared.open(url)
+        }
     }
 
     @objc private func openAbout() {
