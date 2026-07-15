@@ -53,6 +53,11 @@ RELEASE_ZIP="${APP_NAME}-${VERSION}.zip"
 rm -f "$RELEASE_ZIP"
 ditto -c -k --keepParent "$APP_BUNDLE" "$RELEASE_ZIP"
 
+# 4b. build a drag-to-Applications DMG from the stapled .app (for fresh installs)
+echo "Building installer DMG..."
+./make_dmg.sh
+RELEASE_DMG="${APP_NAME}-${VERSION}.dmg"
+
 # 5. EdDSA-sign the zip (private key from keychain)
 echo "Signing update (EdDSA)..."
 SIG_OUT=$("$SIGN_UPDATE" "$RELEASE_ZIP")
@@ -94,9 +99,9 @@ with open(path, "w", encoding="utf-8") as f:
 print(f"   inserted item for v{v}")
 PY
 
-# 7. GitHub release
+# 7. GitHub release — DMG for fresh installs, zip for Sparkle auto-update
 echo "Creating GitHub release v$VERSION..."
-gh release create "v$VERSION" "$RELEASE_ZIP" \
+gh release create "v$VERSION" "$RELEASE_DMG" "$RELEASE_ZIP" \
     --title "$APP_NAME $VERSION" --notes "$NOTES"
 
 cat <<EOF
